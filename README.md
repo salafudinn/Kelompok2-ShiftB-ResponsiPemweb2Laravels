@@ -110,7 +110,7 @@ php artisan serve
 
 ## Link Deployment
 
->  **[Link Deploy](https://b2.athafa.cloud/)**
+>  **[https://b2.athafa.cloud/](https://b2.athafa.cloud/)**
 
 ---
 
