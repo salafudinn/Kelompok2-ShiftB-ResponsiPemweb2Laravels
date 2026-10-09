@@ -59,12 +59,15 @@
             </div>
         </div>
 
-        <!-- RIGHT: Login Form -->
+        <!-- RIGHT: Authentication Forms -->
         <div class="p-10 sm:p-14 flex flex-col justify-center bg-white">
+            <div id="loginPanel">
             <div class="mb-8">
                 <h2 class="text-2xl font-semibold text-slate-900 tracking-tight">Masuk ke akun</h2>
                 <p class="text-sm text-slate-500 mt-1.5">Gunakan kredensial institusi Anda untuk melanjutkan.</p>
             </div>
+
+            <div id="loginSuccess" class="hidden mb-5 bg-emerald-50 text-emerald-700 rounded-lg p-3 text-sm border border-emerald-100" role="status"></div>
 
             <form id="loginForm" class="space-y-5">
                 <div>
@@ -110,11 +113,58 @@
                     Kredensial demo
                 </summary>
                 <div class="mt-3 pl-4 border-l border-slate-200 space-y-1.5 font-mono text-[11px]">
-                    <div class="flex justify-between gap-4"><span class="text-slate-400">Admin</span><span class="text-slate-700">admin@lab.com</span></div>
+                    <div class="flex justify-between gap-4"><span class="text-slate-400">Asisten Lab</span><span class="text-slate-700">admin@lab.com</span></div>
                     <div class="flex justify-between gap-4"><span class="text-slate-400">Mahasiswa</span><span class="text-slate-700">mhs1@lab.com</span></div>
                     <div class="flex justify-between gap-4"><span class="text-slate-400">Password</span><span class="text-slate-700">LabIoT2026!</span></div>
                 </div>
             </details>
+            <p class="mt-6 text-center text-sm text-slate-500">
+                Belum punya akun?
+                <button type="button" onclick="tampilkanRegistrasi()" class="font-medium text-slate-900 hover:underline">Daftar sebagai mahasiswa</button>
+            </p>
+            </div>
+
+            <div id="registerPanel" class="hidden">
+                <div class="mb-8">
+                    <h2 class="text-2xl font-semibold text-slate-900 tracking-tight">Buat akun mahasiswa</h2>
+                    <p class="text-sm text-slate-500 mt-1.5">Daftarkan akun untuk menggunakan inventaris lab.</p>
+                </div>
+
+                <form id="registerForm" class="space-y-5">
+                    <div>
+                        <label for="registerName" class="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">Nama lengkap</label>
+                        <input type="text" id="registerName" required maxlength="255" autocomplete="name" placeholder="Andi Pratama"
+                            class="w-full px-4 py-2.5 text-sm text-slate-900 bg-white border border-slate-200 rounded-lg placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all">
+                    </div>
+                    <div>
+                        <label for="registerEmail" class="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">Email</label>
+                        <input type="email" id="registerEmail" required autocomplete="email" placeholder="nama@gmail.com"
+                            class="w-full px-4 py-2.5 text-sm text-slate-900 bg-white border border-slate-200 rounded-lg placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all">
+                        <p class="text-[10px] text-slate-400 mt-1">Gunakan alamat email Gmail (@gmail.com).</p>
+                    </div>
+                    <div>
+                        <label for="registerPassword" class="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">Kata sandi</label>
+                        <input type="password" id="registerPassword" required minlength="8" autocomplete="new-password"
+                            class="w-full px-4 py-2.5 text-sm text-slate-900 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all">
+                    </div>
+                    <div>
+                        <label for="registerPasswordConfirmation" class="block text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">Ulangi kata sandi</label>
+                        <input type="password" id="registerPasswordConfirmation" required minlength="8" autocomplete="new-password"
+                            class="w-full px-4 py-2.5 text-sm text-slate-900 bg-white border border-slate-200 rounded-lg focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all">
+                    </div>
+                    <p class="text-xs text-slate-500">Role akun: <span class="font-medium text-slate-700">Mahasiswa</span>. Akun asisten lab dibuat oleh administrator.</p>
+                    <div id="registerError" class="hidden bg-red-50 text-red-700 rounded-lg p-3 text-sm border border-red-100" role="alert"></div>
+                    <button type="submit" id="registerSubmitBtn"
+                        class="w-full bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium rounded-lg py-2.5 shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2">
+                        Daftar
+                    </button>
+                </form>
+
+                <p class="mt-6 text-center text-sm text-slate-500">
+                    Sudah punya akun?
+                    <button type="button" onclick="tampilkanLogin()" class="font-medium text-slate-900 hover:underline">Masuk</button>
+                </p>
+            </div>
         </div>
     </div>
 
@@ -125,6 +175,17 @@
         const alertError = document.getElementById('errorMessage');
         const errorText = document.getElementById('errorText');
         const btnSubmit = document.getElementById('submitBtn');
+        const formRegister = document.getElementById('registerForm');
+
+        function tampilkanRegistrasi() {
+            document.getElementById('loginPanel').classList.add('hidden');
+            document.getElementById('registerPanel').classList.remove('hidden');
+        }
+
+        function tampilkanLogin() {
+            document.getElementById('registerPanel').classList.add('hidden');
+            document.getElementById('loginPanel').classList.remove('hidden');
+        }
 
         formLogin.addEventListener('submit', async function(event) {
             event.preventDefault();
@@ -158,6 +219,62 @@
                 btnSubmit.innerHTML = 'Masuk';
                 btnSubmit.disabled = false;
                 btnSubmit.classList.remove('opacity-70', 'cursor-not-allowed');
+            }
+        });
+
+        formRegister.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const error = document.getElementById('registerError');
+            const submitButton = document.getElementById('registerSubmitBtn');
+            const password = document.getElementById('registerPassword').value;
+            const passwordConfirmation = document.getElementById('registerPasswordConfirmation').value;
+
+            error.classList.add('hidden');
+
+            if (password !== passwordConfirmation) {
+                error.textContent = 'Konfirmasi kata sandi tidak cocok.';
+                error.classList.remove('hidden');
+                return;
+            }
+
+            submitButton.textContent = 'Mendaftarkan...';
+            submitButton.disabled = true;
+            submitButton.classList.add('opacity-70', 'cursor-not-allowed');
+
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify({
+                        name: document.getElementById('registerName').value,
+                        email: document.getElementById('registerEmail').value,
+                        password: password,
+                        password_confirmation: passwordConfirmation
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    document.getElementById('email').value = document.getElementById('registerEmail').value;
+                    document.getElementById('password').value = '';
+                    document.getElementById('loginSuccess').textContent = 'Akun mahasiswa berhasil dibuat. Silakan masuk.';
+                    document.getElementById('loginSuccess').classList.remove('hidden');
+                    formRegister.reset();
+                    tampilkanLogin();
+                } else {
+                    const validationErrors = data.errors ? Object.values(data.errors).flat().join(' ') : '';
+                    error.textContent = validationErrors || data.message || 'Registrasi gagal. Silakan coba lagi.';
+                    error.classList.remove('hidden');
+                }
+            } catch (exception) {
+                error.textContent = 'Tidak dapat terhubung ke server. Silakan coba lagi.';
+                error.classList.remove('hidden');
+            } finally {
+                submitButton.textContent = 'Daftar';
+                submitButton.disabled = false;
+                submitButton.classList.remove('opacity-70', 'cursor-not-allowed');
             }
         });
     </script>

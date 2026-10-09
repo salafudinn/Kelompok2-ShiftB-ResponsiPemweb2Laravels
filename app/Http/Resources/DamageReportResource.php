@@ -13,7 +13,13 @@ class DamageReportResource extends JsonResource
             'id' => $this->id,
             'damage_type' => $this->damage_type,
             'description' => $this->description,
-            'image_url' => $this->image_path ? asset('storage/'.$this->image_path) : null,
+            'images' => $this->whenLoaded('images', fn () => $this->images->map(fn ($image) => [
+                'id' => $image->id,
+                'image_url' => asset('storage/'.$image->image_path),
+            ])),
+            'image_url' => $this->whenLoaded('images', fn () => $this->images->first()
+                ? asset('storage/'.$this->images->first()->image_path)
+                : null),
             'repair_status' => $this->repair_status,
             'repair_note' => $this->repair_note,
             'repairer_name' => $this->repairer_name,

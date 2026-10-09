@@ -8,7 +8,7 @@ class IoTKitRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return $this->user()->role === 'asisten_lab';
+        return in_array($this->user()->role, ['asisten_lab', 'owner'], true);
     }
 
     public function rules(): array
@@ -16,7 +16,7 @@ class IoTKitRequest extends FormRequest
         $id = $this->route('id');
 
         return [
-            'code' => 'required|string|unique:iot_kits,code' . ($id ? ",$id" : ''),
+            'code' => 'required|string|unique:iot_kits,code'.($id ? ",$id" : ''),
             'name' => 'required|string|max:255',
             'category' => 'required|string|max:255',
             'storage_location' => 'nullable|string|max:255',

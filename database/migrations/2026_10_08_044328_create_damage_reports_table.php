@@ -20,6 +20,14 @@ return new class extends Migration
             $table->text('description');
             $table->enum('repair_status', ['REPORTED', 'IN_REPAIR', 'RESOLVED', 'DISCARDED'])->default('REPORTED');
             $table->text('repair_note')->nullable();
+            $table->string('repairer_name')->nullable();
+            $table->timestamps();
+        });
+
+        Schema::create('damage_report_images', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('damage_report_id')->constrained()->cascadeOnDelete();
+            $table->string('image_path');
             $table->timestamps();
         });
     }
@@ -29,6 +37,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('damage_report_images');
         Schema::dropIfExists('damage_reports');
     }
 };

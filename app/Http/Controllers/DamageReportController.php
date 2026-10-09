@@ -10,7 +10,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use RuntimeException;
+use Throwable;
 
 class DamageReportController extends Controller
 {
@@ -19,12 +21,12 @@ class DamageReportController extends Controller
         $user = $request->user();
 
         if ($user->role === 'mahasiswa') {
-            $reports = DamageReport::with(['iotKit', 'reporter'])
+            $reports = DamageReport::with(['iotKit', 'reporter', 'images'])
                 ->where('reporter_id', $user->id)
                 ->latest()
                 ->paginate(10);
         } else {
-            $reports = DamageReport::with(['iotKit', 'reporter'])
+            $reports = DamageReport::with(['iotKit', 'reporter', 'images'])
                 ->latest()
                 ->paginate(10);
         }
@@ -34,34 +36,45 @@ class DamageReportController extends Controller
 
     public function store(DamageReportRequest $request): JsonResponse
     {
-        return DB::transaction(function () use ($request) {
-            $imagePath = null;
+        $imagePaths = [];
 
-            if ($request->hasFile('image')) {
-                $imagePath = $request->file('image')->store('damage-reports', 'public');
+        try {
+            foreach ($request->file('images', []) as $image) {
+                $imagePath = $image->store('damage-reports', 'public');
 
                 if (! is_string($imagePath)) {
                     throw new RuntimeException('Gagal menyimpan gambar laporan insiden.');
                 }
+
+                $imagePaths[] = $imagePath;
             }
 
-            $report = DamageReport::create([
-                'borrowing_id' => $request->borrowing_id,
-                'iot_kit_id' => $request->iot_kit_id,
-                'reporter_id' => $request->user()->id,
-                'damage_type' => $request->damage_type,
-                'description' => $request->description,
-                'image_path' => $imagePath,
-                'repair_status' => 'REPORTED',
-            ]);
+            $report = DB::transaction(function () use ($request, $imagePaths): DamageReport {
+                $report = DamageReport::create([
+                    'borrowing_id' => $request->borrowing_id,
+                    'iot_kit_id' => $request->iot_kit_id,
+                    'reporter_id' => $request->user()->id,
+                    'damage_type' => $request->damage_type,
+                    'description' => $request->description,
+                    'repair_status' => 'REPORTED',
+                ]);
 
-            $report->load('iotKit');
+                foreach ($imagePaths as $imagePath) {
+                    $report->images()->create(['image_path' => $imagePath]);
+                }
+
+                return $report->load(['iotKit', 'images']);
+            });
 
             return response()->json([
                 'message' => 'Laporan kerusakan berhasil disubmit',
                 'data' => new DamageReportResource($report),
             ], 201);
-        });
+        } catch (Throwable $exception) {
+            Storage::disk('public')->delete($imagePaths);
+
+            throw $exception;
+        }
     }
 
     public function resolve(Request $request, $id): JsonResponse
@@ -87,7 +100,7 @@ class DamageReportController extends Controller
                 $kit->update(['status' => 'AVAILABLE']);
             }
 
-            $report->load(['iotKit', 'reporter']);
+            $report->load(['iotKit', 'reporter', 'images']);
 
             return response()->json([
                 'message' => 'Status perbaikan diperbarui',

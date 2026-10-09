@@ -14,12 +14,12 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        // 1 Asisten Lab
+        // Owner akun demo yang mengelola akun asisten lab.
         User::create([
-            'name' => 'Budi Santoso (Asisten)',
+            'name' => 'Budi Santoso',
             'email' => 'admin@lab.com',
             'password' => Hash::make('LabIoT2026!'),
-            'role' => 'asisten_lab',
+            'role' => 'owner',
         ]);
 
         // 2 Mahasiswa

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class DamageReport extends Model
 {
@@ -16,7 +17,6 @@ class DamageReport extends Model
         'reporter_id',
         'damage_type',
         'description',
-        'image_path',
         'repair_status',
         'repair_note',
         'repairer_name',
@@ -35,5 +35,10 @@ class DamageReport extends Model
     public function reporter(): BelongsTo
     {
         return $this->belongsTo(User::class, 'reporter_id');
+    }
+
+    public function images(): HasMany
+    {
+        return $this->hasMany(DamageReportImage::class);
     }
 }

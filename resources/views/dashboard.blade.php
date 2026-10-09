@@ -395,7 +395,9 @@
         html.dark .hover\:text-slate-900:hover { color: #F1F5F9 !important; }
 
         /* Modal */
-        html.dark #modalPinjam > div, html.dark #modalKit > div {
+        html.dark #modalPinjam > div, html.dark #modalKit > div,
+        html.dark #modalAssistantAccounts > div, html.dark #modalAssistantAccountForm > div,
+        html.dark #modalDamageImages > div {
             border-color: #1E293B !important;
         }
 
@@ -438,6 +440,14 @@
                 </div>
 
                 <div class="flex items-center gap-2.5">
+                    <button id="btnKelolaAsisten" onclick="bukaKelolaAsisten()"
+                        class="hidden items-center gap-2 px-3 py-2 text-xs font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                        title="Kelola akun asisten lab">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M16 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2m12-13a4 4 0 11-8 0 4 4 0 018 0zm2 4h6m-3-3v6"/>
+                        </svg>
+                        <span class="hidden sm:inline">Kelola Asisten</span>
+                    </button>
                     <div class="text-right hidden sm:block leading-tight mr-1">
                         <p id="userName" class="text-[13px] font-medium text-slate-900"></p>
                         <p id="userRole" class="text-[11px] text-slate-500 mt-0.5"></p>
@@ -639,9 +649,10 @@
                             class="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm placeholder-slate-400 transition-all resize-none"></textarea>
                     </div>
                     <div class="sm:col-span-2">
-                        <label for="damageImage" class="block text-[10px] font-semibold text-slate-500 uppercase tracking-[.1em] mb-2">Foto Insiden <span class="normal-case tracking-normal text-slate-300">(opsional, maks. 2MB)</span></label>
-                        <input type="file" id="damageImage" accept="image/png,image/jpeg,image/webp"
+                        <label for="damageImage" class="block text-[10px] font-semibold text-slate-500 uppercase tracking-[.1em] mb-2">Foto Insiden <span class="normal-case tracking-normal text-slate-300">(opsional, maks. 5 foto, 5MB per foto)</span></label>
+                        <input type="file" id="damageImage" accept="image/png,image/jpeg,image/webp" multiple onchange="validasiGambarLaporan(event)"
                             class="w-full text-xs text-slate-600 file:mr-3 file:rounded-lg file:border file:border-slate-200 file:bg-white file:px-3 file:py-2 file:text-xs file:font-medium file:text-slate-700 hover:file:bg-slate-50">
+                        <p id="damageImageSelection" class="text-[10px] text-slate-400 mt-1" aria-live="polite">Belum ada gambar dipilih.</p>
                     </div>
                     <div id="formKerusakanFeedback" class="sm:col-span-2 hidden text-xs rounded-lg p-3"></div>
                     <div class="sm:col-span-2 flex justify-end">
@@ -706,6 +717,100 @@
     </main>
 
     <div id="toastContainer" class="fixed top-20 right-4 sm:right-6 z-[60] space-y-2 pointer-events-none"></div>
+
+    <div id="modalDamageImages" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[70] hidden items-center justify-center p-4"
+        onclick="if (event.target === this) tutupModal('modalDamageImages')">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] border border-slate-200 overflow-hidden anim-fade-up flex flex-col">
+            <div class="flex justify-between items-center gap-4 px-6 py-4 border-b border-slate-200">
+                <div>
+                    <h3 class="font-semibold text-slate-900 tracking-tight text-base">Foto Laporan Insiden</h3>
+                    <p id="damageImagesCount" class="text-xs text-slate-500 mt-0.5"></p>
+                </div>
+                <button onclick="tutupModal('modalDamageImages')" class="text-slate-400 hover:text-slate-700 transition-colors p-1.5 rounded-md hover:bg-slate-100" aria-label="Tutup galeri foto">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div id="damageImagesGallery" class="p-5 sm:p-6 overflow-y-auto flex flex-col items-center gap-5"></div>
+        </div>
+    </div>
+
+    <div id="modalAssistantAccounts" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl border border-slate-200 overflow-hidden anim-fade-up">
+            <div class="flex justify-between items-start px-6 pt-6 pb-4">
+                <div>
+                    <h3 class="font-semibold text-slate-900 tracking-tight text-base">Kelola Akun Asisten Lab</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Buat, ubah, dan hapus akun asisten laboratorium.</p>
+                </div>
+                <button onclick="tutupModal('modalAssistantAccounts')" class="text-slate-400 hover:text-slate-700 transition-colors p-1.5 rounded-md hover:bg-slate-100" aria-label="Tutup">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <div class="px-6 pb-6">
+                <div class="flex justify-end mb-4">
+                    <button onclick="bukaFormAsisten()" class="bg-slate-900 hover:bg-slate-800 text-white rounded-lg px-3.5 py-2 text-xs font-medium transition-colors">
+                        Tambah Asisten
+                    </button>
+                </div>
+                <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                    <table class="w-full text-sm text-left">
+                        <thead class="border-b border-slate-200 bg-slate-50/60">
+                            <tr>
+                                <th class="px-4 py-3 text-[10px] font-semibold text-slate-500 uppercase tracking-[.1em]">Nama</th>
+                                <th class="px-4 py-3 text-[10px] font-semibold text-slate-500 uppercase tracking-[.1em]">Email</th>
+                                <th class="px-4 py-3 text-[10px] font-semibold text-slate-500 uppercase tracking-[.1em] text-right">Tindakan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="assistantAccountsList" class="divide-y divide-slate-100">
+                            <tr><td colspan="3" class="p-8 text-center text-slate-400 text-sm">Memuat akun asisten...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalAssistantAccountForm" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[55] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md border border-slate-200 overflow-hidden anim-fade-up">
+            <div class="flex justify-between items-start px-6 pt-6 pb-4">
+                <div>
+                    <h3 id="assistantFormTitle" class="font-semibold text-slate-900 tracking-tight text-base">Tambah Asisten Lab</h3>
+                    <p class="text-xs text-slate-500 mt-0.5">Role akun ditetapkan sebagai asisten lab.</p>
+                </div>
+                <button onclick="tutupModal('modalAssistantAccountForm')" class="text-slate-400 hover:text-slate-700 transition-colors p-1.5 rounded-md hover:bg-slate-100" aria-label="Tutup">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <form id="assistantAccountForm" onsubmit="simpanAsisten(event)" class="px-6 pb-6 pt-2 space-y-4">
+                <div>
+                    <label for="assistantName" class="block text-[10px] font-semibold text-slate-500 uppercase tracking-[.1em] mb-2">Nama lengkap</label>
+                    <input type="text" id="assistantName" required maxlength="255" autocomplete="name"
+                        class="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm transition-all">
+                </div>
+                <div>
+                    <label for="assistantEmail" class="block text-[10px] font-semibold text-slate-500 uppercase tracking-[.1em] mb-2">Email</label>
+                    <input type="email" id="assistantEmail" required maxlength="255" autocomplete="email"
+                        class="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm transition-all">
+                    <p class="text-[10px] text-slate-400 mt-1">Gunakan alamat email Gmail (@gmail.com).</p>
+                </div>
+                <div>
+                    <label for="assistantPassword" class="block text-[10px] font-semibold text-slate-500 uppercase tracking-[.1em] mb-2">Kata sandi</label>
+                    <input type="password" id="assistantPassword" minlength="8" autocomplete="new-password"
+                        class="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm transition-all">
+                    <p id="assistantPasswordHint" class="text-[10px] text-slate-400 mt-1">Minimal 8 karakter.</p>
+                </div>
+                <div>
+                    <label for="assistantPasswordConfirmation" class="block text-[10px] font-semibold text-slate-500 uppercase tracking-[.1em] mb-2">Konfirmasi kata sandi</label>
+                    <input type="password" id="assistantPasswordConfirmation" minlength="8" autocomplete="new-password"
+                        class="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm transition-all">
+                </div>
+                <div id="assistantAccountFeedback" class="hidden text-xs rounded-lg p-3" role="alert"></div>
+                <div class="flex gap-2 pt-1">
+                    <button type="button" onclick="tutupModal('modalAssistantAccountForm')" class="flex-1 border border-slate-200 text-slate-700 rounded-lg py-2.5 text-sm font-medium hover:bg-slate-50 transition-all">Batal</button>
+                    <button type="submit" id="assistantAccountSubmit" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white rounded-lg py-2.5 text-sm font-medium transition-all">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <div id="modalPinjam" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md border border-slate-200 overflow-hidden anim-fade-up">
@@ -834,14 +939,21 @@
     } else {
         document.getElementById('appBody').classList.remove('hidden');
         document.getElementById('userName').textContent = userAuth.name;
-        document.getElementById('userRole').textContent = userAuth.role === 'asisten_lab' ? 'Administrator Sistem' : 'Akses Mahasiswa';
+        document.getElementById('userRole').textContent = userAuth.role === 'owner'
+            ? 'Owner'
+            : (userAuth.role === 'asisten_lab' ? 'Asisten Lab' : 'Akses Mahasiswa');
         document.getElementById('userAvatar').textContent = userAuth.name.charAt(0).toUpperCase();
         document.getElementById('greetName').textContent = userAuth.name.split(' ')[0];
 
-        if (userAuth.role === 'asisten_lab') {
+        if (['asisten_lab', 'owner'].includes(userAuth.role)) {
             document.getElementById('btn-kelola').classList.remove('hidden');
             document.getElementById('btnTambahKit').classList.remove('hidden');
             document.getElementById('thAksiKerusakan').classList.remove('hidden');
+        }
+
+        if (userAuth.role === 'owner') {
+            document.getElementById('btnKelolaAsisten').classList.remove('hidden');
+            document.getElementById('btnKelolaAsisten').classList.add('inline-flex');
         }
 
         document.getElementById('pinjamTglMulai').value = new Date().toISOString().split('T')[0];
@@ -868,6 +980,8 @@
     let editModeId = null;
     let hasNewImage = false;
     let removeImage = false;
+    let assistantEditId = null;
+    let assistantAccounts = [];
 
     /* ===== Toast ===== */
     function showToast(msg, type = 'success') {
@@ -937,7 +1051,140 @@
     function formatRupiah(n) { return 'Rp ' + Number(n).toLocaleString('id-ID'); }
     function tutupModal(id) { document.getElementById(id).classList.replace('flex','hidden'); }
 
+    async function bukaKelolaAsisten() {
+        document.getElementById('modalAssistantAccounts').classList.replace('hidden','flex');
+        await muatAkunAsisten();
+    }
+
+    async function muatAkunAsisten() {
+        const tbody = document.getElementById('assistantAccountsList');
+        tbody.innerHTML = '<tr><td colspan="3" class="p-8 text-center text-slate-400 text-sm">Memuat akun asisten...</td></tr>';
+
+        try {
+            const response = await apiFetch('/api/assistant-accounts');
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || 'Gagal memuat akun asisten lab.');
+            }
+
+            assistantAccounts = result.data || [];
+            if (assistantAccounts.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="p-8 text-center text-slate-400 text-sm">Belum ada akun asisten lab.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = assistantAccounts.map(assistant => `
+                <tr>
+                    <td class="px-4 py-3 font-medium text-slate-800">${escapeHtml(assistant.name)}</td>
+                    <td class="px-4 py-3 text-slate-600">${escapeHtml(assistant.email)}</td>
+                    <td class="px-4 py-3 text-right whitespace-nowrap">
+                        <button onclick="bukaFormAsisten(${Number(assistant.id)})" class="text-xs font-medium text-slate-700 hover:text-slate-950 px-2 py-1">Edit</button>
+                        <button onclick="hapusAkunAsisten(${Number(assistant.id)})" class="text-xs font-medium text-red-600 hover:text-red-800 px-2 py-1">Hapus</button>
+                    </td>
+                </tr>
+            `).join('');
+        } catch (error) {
+            tbody.innerHTML = '<tr><td colspan="3" class="p-8 text-center text-red-600 text-sm">Gagal memuat akun. Silakan coba lagi.</td></tr>';
+            showToast(error.message || 'Gagal memuat akun asisten lab.', 'error');
+        }
+    }
+
+    function bukaFormAsisten(id = null) {
+        assistantEditId = id;
+        const form = document.getElementById('assistantAccountForm');
+        const password = document.getElementById('assistantPassword');
+        const confirmation = document.getElementById('assistantPasswordConfirmation');
+        const assistant = assistantAccounts.find(account => Number(account.id) === Number(id));
+
+        form.reset();
+        document.getElementById('assistantAccountFeedback').classList.add('hidden');
+        document.getElementById('assistantFormTitle').textContent = id ? 'Edit Akun Asisten' : 'Tambah Asisten Lab';
+        document.getElementById('assistantAccountSubmit').textContent = id ? 'Perbarui' : 'Simpan';
+        password.required = !id;
+        confirmation.required = !id;
+        document.getElementById('assistantPasswordHint').textContent = id
+            ? 'Kosongkan jika kata sandi tidak ingin diubah.'
+            : 'Minimal 8 karakter.';
+
+        if (assistant) {
+            document.getElementById('assistantName').value = assistant.name;
+            document.getElementById('assistantEmail').value = assistant.email;
+        }
+
+        document.getElementById('modalAssistantAccountForm').classList.replace('hidden','flex');
+    }
+
+    async function simpanAsisten(event) {
+        event.preventDefault();
+
+        const button = document.getElementById('assistantAccountSubmit');
+        const payload = {
+            name: document.getElementById('assistantName').value,
+            email: document.getElementById('assistantEmail').value,
+        };
+        const password = document.getElementById('assistantPassword').value;
+        const confirmation = document.getElementById('assistantPasswordConfirmation').value;
+
+        if (password || assistantEditId === null) {
+            payload.password = password;
+            payload.password_confirmation = confirmation;
+        }
+
+        button.disabled = true;
+        button.textContent = 'Menyimpan...';
+
+        try {
+            const isEdit = assistantEditId !== null;
+            const response = await apiFetch(
+                isEdit ? `/api/assistant-accounts/${assistantEditId}` : '/api/assistant-accounts',
+                {
+                    method: isEdit ? 'PUT' : 'POST',
+                    body: JSON.stringify(payload),
+                }
+            );
+            const result = await response.json();
+
+            if (!response.ok) {
+                const validationErrors = result.errors ? Object.values(result.errors).flat().join(' ') : '';
+                throw new Error(validationErrors || result.message || 'Akun asisten gagal disimpan.');
+            }
+
+            tutupModal('modalAssistantAccountForm');
+            showToast(result.message || 'Akun asisten berhasil disimpan.');
+            await muatAkunAsisten();
+        } catch (error) {
+            showFeedback('assistantAccountFeedback', 'error', error.message || 'Tidak dapat menyimpan akun asisten.');
+        } finally {
+            button.disabled = false;
+            button.textContent = assistantEditId !== null ? 'Perbarui' : 'Simpan';
+        }
+    }
+
+    async function hapusAkunAsisten(id) {
+        const assistant = assistantAccounts.find(account => Number(account.id) === Number(id));
+        if (!assistant || !confirm(`Hapus akun asisten ${assistant.name}?`)) {
+            return;
+        }
+
+        try {
+            const response = await apiFetch(`/api/assistant-accounts/${id}`, { method: 'DELETE' });
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || 'Akun asisten gagal dihapus.');
+            }
+
+            showToast(result.message || 'Akun asisten berhasil dihapus.');
+            await muatAkunAsisten();
+        } catch (error) {
+            showToast(error.message || 'Tidak dapat menghapus akun asisten.', 'error');
+        }
+    }
+
     const tabIds = ['tab-katalog','tab-riwayat','tab-kerusakan','tab-kelola'];
+    let damageReports = [];
+
     function bukaTab(tabId) {
         tabIds.forEach(id => {
             const el = document.getElementById(id);
@@ -1184,13 +1431,14 @@
         tbody.innerHTML = '<tr><td colspan="7" class="p-10 text-center text-slate-400 text-sm"><div class="inline-flex items-center gap-2"><span class="w-4 h-4 border-2 border-slate-300 border-t-slate-700 rounded-full animate-spin"></span>Memuat data insiden...</div></td></tr>';
         try {
             const res = await apiFetch('/api/damage-reports'); const json = await res.json(); const data = json.data || [];
+            damageReports = data;
             if (!data.length) {
                 tbody.innerHTML = '<tr><td colspan="7" class="p-16 text-center text-slate-500 text-sm">Belum ada laporan insiden.</td></tr>';
                 return;
             }
             tbody.innerHTML = data.map(r => {
                 let aksi = `<td class="px-6 py-4 hidden" id="aksiHdn"></td>`;
-                if (userAuth.role === 'asisten_lab') {
+                if (['asisten_lab', 'owner'].includes(userAuth.role)) {
                     aksi = `<td class="px-6 py-4">
                         <div class="flex flex-wrap gap-1.5">
                         ${r.repair_status === 'REPORTED' ? `<button onclick="resolveKerusakan(${r.id},'IN_REPAIR')" class="px-2.5 py-1 text-[10px] font-medium border border-blue-200 text-blue-700 hover:bg-blue-50 rounded-md transition-colors active:scale-95">Inspeksi</button>` : ''}
@@ -1199,11 +1447,14 @@
                         </div>
                     </td>`;
                 }
+                const firstImageUrl = r.images?.[0]?.image_url || r.image_url;
+                const imageCount = r.images?.length || (firstImageUrl ? 1 : 0);
+                const extraImages = imageCount - 1;
                 return `<tr class="hover:bg-slate-50/60 transition-colors">
                     <td class="px-6 py-4"><p class="text-[13px] font-medium text-slate-900">${r.iot_kit?.name??'—'}</p><p class="text-[11px] text-slate-400 mono mt-0.5">${r.iot_kit?.code??'—'}</p></td>
                     <td class="px-6 py-4 text-xs text-slate-600 font-medium">${r.damage_type.replace(/_/g,' ')}</td>
-                    <td class="px-6 py-4">${r.image_url ? `<a href="${escapeHtml(r.image_url)}" target="_blank" rel="noopener"><img src="${escapeHtml(r.image_url)}" alt="Foto insiden" class="w-16 h-12 object-cover rounded-md"></a>` : '<span class="text-slate-300">—</span>'}</td>
-                    <td class="px-6 py-4 text-xs text-slate-500 max-w-[220px] truncate" title="${r.description}">${r.description}</td>
+                    <td class="px-6 py-4">${firstImageUrl ? `<button type="button" onclick="bukaGaleriKerusakan(${Number(r.id)})" title="Lihat ${imageCount} foto" aria-label="Lihat ${imageCount} foto laporan" class="relative block w-16 h-12 overflow-hidden rounded-md"><img src="${escapeHtml(firstImageUrl)}" alt="Foto pertama insiden" class="w-full h-full object-cover"><span class="absolute inset-0 bg-black/40 pointer-events-none"></span>${extraImages > 0 ? `<span class="absolute inset-0 flex items-center justify-center text-white text-xs font-semibold pointer-events-none">+${extraImages}</span>` : ''}</button>` : '<span class="text-slate-300">—</span>'}</td>
+                    <td class="px-6 py-4 text-xs text-slate-500 max-w-[220px] truncate" title="${escapeHtml(r.description)}">${escapeHtml(r.description)}</td>
                     <td class="px-6 py-4"><span class="text-xs text-slate-600">${escapeHtml(r.repairer_name || '—')}</span></td>
                     <td class="px-6 py-4">${badge(r.repair_status)}</td>
                     ${aksi}
@@ -1212,15 +1463,33 @@
         } catch(e) {}
     }
 
+    function bukaGaleriKerusakan(reportId) {
+        const report = damageReports.find(item => Number(item.id) === Number(reportId));
+        const images = report?.images?.length
+            ? report.images
+            : (report?.image_url ? [{ image_url: report.image_url }] : []);
+
+        if (!images.length) {
+            return;
+        }
+
+        document.getElementById('damageImagesCount').textContent = `${images.length} gambar`;
+        document.getElementById('damageImagesGallery').innerHTML = images.map((image, index) => `
+            <img src="${escapeHtml(image.image_url)}" alt="Foto ${index + 1} laporan insiden"
+                class="block w-auto h-auto max-w-full max-h-[70vh] object-contain rounded-lg">
+        `).join('');
+        document.getElementById('modalDamageImages').classList.replace('hidden', 'flex');
+    }
+
     async function kirimLaporanKerusakan(e) {
         e.preventDefault();
         const body = new FormData();
         body.append('iot_kit_id', document.getElementById('damageKitId').value);
         body.append('damage_type', document.getElementById('damageTipe').value);
         body.append('description', document.getElementById('damageDesc').value);
-        const image = document.getElementById('damageImage').files[0];
-        if (image) {
-            body.append('image', image);
+        const images = document.getElementById('damageImage').files;
+        for (const image of images) {
+            body.append('images[]', image);
         }
         const btn = e.target.querySelector('button'); const originalText = btn.textContent;
         btn.disabled = true; btn.textContent = "Mengajukan..."; btn.classList.add('opacity-70');
@@ -1231,6 +1500,7 @@
                 showFeedback('formKerusakanFeedback','success','Laporan insiden berhasil dicatat.');
                 showToast('Laporan insiden berhasil dikirim.');
                 document.getElementById('formKerusakan').reset();
+                document.getElementById('damageImageSelection').textContent = 'Belum ada gambar dipilih.';
                 tampilkanKerusakan();
                 refreshStats();
             } else {
@@ -1238,6 +1508,31 @@
             }
         } catch(err) { showFeedback('formKerusakanFeedback','error','Gangguan koneksi.'); }
         btn.disabled = false; btn.textContent = originalText; btn.classList.remove('opacity-70');
+    }
+
+    function validasiGambarLaporan(event) {
+        const input = event.target;
+        const images = Array.from(input.files || []);
+        const oversizedImage = images.find(image => image.size > 5 * 1024 * 1024);
+
+        if (images.length > 5) {
+            input.value = '';
+            document.getElementById('damageImageSelection').textContent = 'Belum ada gambar dipilih.';
+            showFeedback('formKerusakanFeedback', 'error', 'Maksimal 5 gambar untuk satu laporan.');
+            return;
+        }
+
+        if (oversizedImage) {
+            input.value = '';
+            document.getElementById('damageImageSelection').textContent = 'Belum ada gambar dipilih.';
+            showFeedback('formKerusakanFeedback', 'error', 'Ukuran setiap gambar maksimal 5 MB.');
+            return;
+        }
+
+        document.getElementById('damageImageSelection').textContent = images.length
+            ? `${images.length} gambar dipilih. Gambar pertama akan ditampilkan di daftar laporan.`
+            : 'Belum ada gambar dipilih.';
+        document.getElementById('formKerusakanFeedback').classList.add('hidden');
     }
 
     async function resolveKerusakan(id, status) {

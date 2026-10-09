@@ -5,7 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterRequest extends FormRequest
+class StoreAssistantAccountRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,12 +26,13 @@ class RegisterRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'email' => [
                 'required',
+                'string',
                 'email',
                 'regex:/^[^@\s]+@gmail\.com$/i',
-                'unique:users',
+                'max:255',
+                'unique:users,email',
             ],
-            'password' => ['required', 'string', 'min:8'],
-            'password_confirmation' => ['sometimes', 'required', 'same:password'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
         ];
     }
 

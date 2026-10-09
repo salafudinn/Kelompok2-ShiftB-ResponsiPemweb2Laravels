@@ -18,7 +18,8 @@ class DamageReportRequest extends FormRequest
             'iot_kit_id' => 'required|exists:iot_kits,id',
             'damage_type' => 'required|in:MINOR_COMPONENT,BROKEN_BOARD,MISSING_PARTS',
             'description' => 'required|string',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'images' => 'nullable|array|max:5',
+            'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:5120',
         ];
     }
 }

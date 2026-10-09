@@ -18,7 +18,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::define('manage-kits', function ($user) {
-            return $user->role === 'asisten_lab';
+            return in_array($user->role, ['asisten_lab', 'owner'], true);
         });
 
         Gate::define('borrow-kits', function ($user) {
@@ -26,11 +26,15 @@ class AppServiceProvider extends ServiceProvider
         });
 
         Gate::define('manage-borrowings', function ($user) {
-            return $user->role === 'asisten_lab';
+            return in_array($user->role, ['asisten_lab', 'owner'], true);
         });
 
         Gate::define('manage-reports', function ($user) {
-            return $user->role === 'asisten_lab';
+            return in_array($user->role, ['asisten_lab', 'owner'], true);
+        });
+
+        Gate::define('manage-assistant-accounts', function ($user) {
+            return $user->role === 'owner';
         });
     }
 }

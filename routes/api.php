@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AssistantAccountController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BorrowingController;
 use App\Http\Controllers\DamageReportController;
@@ -13,6 +14,14 @@ Route::post('/auth/login', [AuthController::class, 'login']);
 // Protected — Auth:Sanctum
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/logout', [AuthController::class, 'logout']);
+
+    // Assistant accounts — only the owner
+    Route::middleware('can:manage-assistant-accounts')->group(function () {
+        Route::get('/assistant-accounts', [AssistantAccountController::class, 'index']);
+        Route::post('/assistant-accounts', [AssistantAccountController::class, 'store']);
+        Route::put('/assistant-accounts/{assistant}', [AssistantAccountController::class, 'update']);
+        Route::delete('/assistant-accounts/{assistant}', [AssistantAccountController::class, 'destroy']);
+    });
 
     // IoT Kits — semua user bisa lihat
     Route::get('/iot-kits', [IoTKitController::class, 'index']);
