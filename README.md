@@ -4,14 +4,14 @@
 
 ---
 
-## 📌 Informasi Kelompok
+## Informasi Kelompok
 
 - **Nomor Kelompok:** Kelompok 2
 - **Shift Praktikum:** Shift B
 
 ---
 
-## 👥 Anggota Kelompok
+## Anggota Kelompok
 
 | No | Nama Lengkap | NIM | Shift Awal | Shift Akhir | Jobdesk / Kontribusi | Link Video |
 |---|---|---|---|---|---|---|
@@ -22,13 +22,13 @@
 
 ---
 
-## 📖 Deskripsi Aplikasi
+## Deskripsi Aplikasi
 
 **LabManager Pro** adalah aplikasi web berbasis RESTful API (Laravel 13) yang dirancang untuk mendigitalisasi proses peminjaman peralatan IoT di laboratorium kampus secara terstruktur dan akuntabel.
 
 ---
 
-## ❗ Permasalahan yang Diangkat
+## Permasalahan yang Diangkat
 
 Pengelolaan inventaris alat laboratorium (terutama perangkat IoT) masih dilakukan secara manual menggunakan logbook kertas, yang menyebabkan berbagai masalah nyata:
 
@@ -39,7 +39,7 @@ Pengelolaan inventaris alat laboratorium (terutama perangkat IoT) masih dilakuka
 
 ---
 
-## 💡 Solusi yang Ditawarkan
+## Solusi yang Ditawarkan
 
 Sistem informasi digital dengan alur proses bisnis terdefinisi penuh:
 
@@ -51,7 +51,7 @@ Sistem informasi digital dengan alur proses bisnis terdefinisi penuh:
 
 ---
 
-## ⚙️ Teknologi yang Digunakan
+## Teknologi yang Digunakan
 
 | Komponen | Teknologi |
 |---|---|
@@ -64,7 +64,7 @@ Sistem informasi digital dengan alur proses bisnis terdefinisi penuh:
 
 ---
 
-## 🚀 Cara Menjalankan Aplikasi
+## Cara Menjalankan Aplikasi
 
 ```bash
 # 1. Clone repository
@@ -98,7 +98,7 @@ php artisan serve
 
 ---
 
-## 🔑 Akun Pengujian
+## Akun Pengujian
 
 | Role | Email | Password | Hak Akses |
 |---|---|---|---|
@@ -108,13 +108,13 @@ php artisan serve
 
 ---
 
-## 🔗 Link Deployment
+## Link Deployment
 
-> 🔗 **[Isi link deployment sebelum dikumpulkan](#)**
+>  **[Isi link deployment sebelum dikumpulkan](#)**
 
 ---
 
-## 📡 API Documentation
+## API Documentation
 
 Semua endpoint (kecuali `register` dan `login`) memerlukan header:
 ```
