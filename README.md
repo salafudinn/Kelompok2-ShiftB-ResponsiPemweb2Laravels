@@ -1,4 +1,4 @@
-# LabManager Pro
+# LaboRa
 
 > Sistem Informasi Peminjaman, Kalkulasi Denda Keterlambatan, dan Pelaporan Kerusakan IoT Kit Laboratorium
 
@@ -24,7 +24,7 @@
 
 ## Deskripsi Aplikasi
 
-**LabManager Pro** adalah aplikasi web berbasis RESTful API (Laravel 13) yang dirancang untuk mendigitalisasi proses peminjaman peralatan IoT di laboratorium kampus secara terstruktur dan akuntabel.
+**LaboRa** adalah aplikasi web berbasis RESTful API (Laravel 13) yang dirancang untuk mendigitalisasi proses peminjaman peralatan IoT di laboratorium kampus secara terstruktur dan akuntabel.
 
 ---
 
