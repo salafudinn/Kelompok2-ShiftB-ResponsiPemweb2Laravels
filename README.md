@@ -15,7 +15,7 @@
 
 | No | Nama Lengkap | NIM | Shift Awal | Shift Akhir | Jobdesk / Kontribusi | Link Video |
 |---|---|---|---|---|---|---|
-| 1 | Fachriel Yoga Wicaksono | H1H024042 | Shift A | Shift B | Integrasi Frontend & Autentikasi Sanctum | [Link Video](#) |
+| 1 | Fachriel Yoga Wicaksono | H1H024042 | Shift A | Shift B | login & register, upload gambar | [Link Video](https://youtu.be/0XuWhlWmE3M) |
 | 2 | Wendy Virtus | H1H024048 | Shift B | Shift B | Desain Database, Migrasi, & Seeder | [Link Video](https://youtu.be/3FkmslBWlp4) |
 | 3 | Muhammad Raihan Izzuddin Ismadi | H1H024056 | Shift D | Shift B | RESTful API IoT Kits & Damage Reports | [Link Video](#) |
 | 4 | Muhammad Imam Salafudin | H1H024067 | Shift D | Shift B | CRUD Komponen Peminjaman Iot Kits | [Link Video](https://youtu.be/KLPRGgiluw8) |
